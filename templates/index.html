@@ -10,58 +10,56 @@ body {
     font-family: 'Segoe UI', sans-serif;
     min-height: 100vh;
     overflow-x: hidden;
-    background: linear-gradient(-45deg, #ff9a9e, #fad0c4, #ffc3a0, #ffafbd);
-    background-size: 400% 400%;
-    animation: gradientMove 10s ease infinite;
+    background: radial-gradient(circle at top, #ff9a9e, #fad0c4, #ffafbd);
     display: flex;
     justify-content: center;
     align-items: center;
 }
 
-@keyframes gradientMove {
-    0% {background-position: 0% 50%;}
-    50% {background-position: 100% 50%;}
-    100% {background-position: 0% 50%;}
+/* Sparkle stars */
+body::before {
+    content: "";
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    background-image: url("https://www.transparenttextures.com/patterns/stardust.png");
+    opacity: 0.4;
+    animation: sparkle 10s linear infinite;
+}
+
+@keyframes sparkle {
+    from {background-position: 0 0;}
+    to {background-position: 500px 500px;}
 }
 
 .container {
-    background: rgba(255, 255, 255, 0.2);
-    backdrop-filter: blur(15px);
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(20px);
     border-radius: 25px;
     padding: 40px;
     width: 90%;
     max-width: 500px;
     text-align: center;
     color: white;
-    box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+    box-shadow: 0 0 40px rgba(255,255,255,0.5);
     animation: fadeIn 2s ease forwards;
+    transform: scale(0.9);
     opacity: 0;
 }
 
 @keyframes fadeIn {
-    to {opacity: 1;}
-}
-
-h1 {
-    font-size: 32px;
-}
-
-.photo {
-    margin: 20px 0;
-    border-radius: 20px;
-    overflow: hidden;
-    box-shadow: 0 0 20px rgba(255,255,255,0.6);
-    transition: 0.5s;
+    to {opacity: 1; transform: scale(1);}
 }
 
 .photo img {
     width: 100%;
     border-radius: 20px;
+    box-shadow: 0 0 25px rgba(255,255,255,0.8);
+    transition: 0.5s;
 }
 
-.photo:hover {
+.photo img:hover {
     transform: scale(1.05);
-    box-shadow: 0 0 40px rgba(255,255,255,0.9);
 }
 
 button {
@@ -72,16 +70,6 @@ button {
     font-size: 18px;
     cursor: pointer;
     transition: 0.3s;
-}
-
-.music-btn {
-    background: white;
-    color: #ff4b7d;
-}
-
-.music-btn:hover {
-    background: #ff4b7d;
-    color: white;
 }
 
 .yes-btn {
@@ -95,22 +83,33 @@ button {
 }
 
 .no-btn {
+    position: absolute;
     background: #ffffffaa;
     color: #ff4b7d;
-    position: absolute;
+}
+
+.music-btn {
+    background: white;
+    color: #ff4b7d;
+}
+
+.secret {
+    margin-top: 20px;
+    display: none;
+    font-size: 18px;
+    animation: fadeIn 2s ease forwards;
 }
 
 .message {
     margin-top: 20px;
-    font-size: 18px;
     display: none;
-    animation: fadeIn 2s ease forwards;
+    font-size: 20px;
 }
 
 .heart {
     position: fixed;
-    color: white;
-    animation: floatUp 5s linear infinite;
+    font-size: 24px;
+    animation: floatUp 4s linear infinite;
 }
 
 @keyframes floatUp {
@@ -122,26 +121,22 @@ button {
 
 <body>
 
-<!-- Background Music -->
 <audio id="bgMusic" loop>
     <source src="{{ url_for('static', filename='love.mp3') }}" type="audio/mpeg">
 </audio>
 
 <div class="container">
-
     <h1>Hey Gopluuu 🥰</h1>
 
-    <button class="music-btn" onclick="playMusic()">🎵 Tap to Play Our Song</button>
+    <button class="music-btn" onclick="playMusic()">🎵 Tap to Feel the Magic</button>
 
     <div class="photo">
-        <!-- CHANGE couple.jpg to your real photo file name -->
         <img src="{{ url_for('static', filename='couple.jpeg') }}">
     </div>
 
     <p>
-        This is my favorite place to be.<br>
-        Every smile, every memory… it's you. ✨<br><br>
-        You make ordinary days feel magical 💞
+        Every memory with you feels like a little miracle ✨<br>
+        You are my calm, my happiness, my forever 💞
     </p>
 
     <h2>Will you be my Valentine? 🌹</h2>
@@ -150,41 +145,40 @@ button {
     <button class="no-btn" id="noBtn">NO 🙈</button>
 
     <div class="message" id="loveMessage">
-        I knew it 🥰❤️<br>
-        Forever yours 💍✨
+        You just made my world brighter 🌟💍
+    </div>
+
+    <button onclick="showSecret()">💌 Tap for a Secret</button>
+    <div class="secret" id="secretText">
+        No matter where life takes us,<br>
+        my favorite place will always be next to you ❤️
     </div>
 
 </div>
 
 <script>
 
-// Play music
 function playMusic() {
-    let music = document.getElementById("bgMusic");
-    music.play();
+    document.getElementById("bgMusic").play();
 }
 
-// YES celebration
 function celebrate() {
     document.getElementById("loveMessage").style.display = "block";
     document.getElementById("bgMusic").play();
-    createHearts();
-}
-
-// Floating hearts
-function createHearts() {
-    for (let i = 0; i < 30; i++) {
+    for (let i = 0; i < 40; i++) {
         let heart = document.createElement("div");
         heart.className = "heart";
-        heart.innerHTML = "❤️";
+        heart.innerHTML = "💖";
         heart.style.left = Math.random() * 100 + "vw";
-        heart.style.fontSize = Math.random() * 20 + 20 + "px";
         document.body.appendChild(heart);
-        setTimeout(() => heart.remove(), 5000);
+        setTimeout(() => heart.remove(), 4000);
     }
 }
 
-// Moving NO button
+function showSecret() {
+    document.getElementById("secretText").style.display = "block";
+}
+
 let noBtn = document.getElementById("noBtn");
 
 noBtn.addEventListener("mouseover", function() {
