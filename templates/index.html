@@ -16,7 +16,7 @@ body {
     align-items: center;
 }
 
-/* Sparkle stars */
+/* Sparkle overlay */
 body::before {
     content: "";
     position: fixed;
@@ -93,17 +93,30 @@ button {
     color: #ff4b7d;
 }
 
-.secret {
-    margin-top: 20px;
-    display: none;
-    font-size: 18px;
-    animation: fadeIn 2s ease forwards;
-}
-
 .message {
     margin-top: 20px;
     display: none;
     font-size: 20px;
+    animation: fadeIn 2s ease forwards;
+}
+
+/* RING ANIMATION */
+.ring {
+    font-size: 80px;
+    margin-top: 20px;
+    display: none;
+    animation: ringPop 1.5s ease forwards, glow 2s infinite alternate;
+}
+
+@keyframes ringPop {
+    0% {transform: scale(0); opacity: 0;}
+    60% {transform: scale(1.3); opacity: 1;}
+    100% {transform: scale(1);}
+}
+
+@keyframes glow {
+    from {text-shadow: 0 0 10px #fff;}
+    to {text-shadow: 0 0 30px #fff;}
 }
 
 .heart {
@@ -135,25 +148,21 @@ button {
     </div>
 
     <p>
-        Every memory with you feels like a little miracle ✨<br>
-        You are my calm, my happiness, my forever 💞
+        Every memory with you feels like destiny ✨<br>
+        And I only want one future — with you 💞
     </p>
 
-    <h2>Will you be my Valentine? 🌹</h2>
+    <h2>Will you be mine forever? 💍</h2>
 
-    <button class="yes-btn" onclick="celebrate()">YES 💖</button>
+    <button class="yes-btn" onclick="propose()">YES 💖</button>
     <button class="no-btn" id="noBtn">NO 🙈</button>
 
+    <div class="ring" id="ring">💍</div>
+
     <div class="message" id="loveMessage">
-        You just made my world brighter 🌟💍
+        You just made my world complete 🥰❤️<br>
+        Forever starts now 💞
     </div>
-
-    <button onclick="showSecret()">💌 Tap for a Secret</button>
-    <div class="secret" id="secretText">
-        No matter where life takes us,<br>
-        my favorite place will always be next to you ❤️
-    </div>
-
 </div>
 
 <script>
@@ -162,9 +171,14 @@ function playMusic() {
     document.getElementById("bgMusic").play();
 }
 
-function celebrate() {
+function propose() {
+    document.getElementById("ring").style.display = "block";
     document.getElementById("loveMessage").style.display = "block";
     document.getElementById("bgMusic").play();
+    createHearts();
+}
+
+function createHearts() {
     for (let i = 0; i < 40; i++) {
         let heart = document.createElement("div");
         heart.className = "heart";
@@ -173,10 +187,6 @@ function celebrate() {
         document.body.appendChild(heart);
         setTimeout(() => heart.remove(), 4000);
     }
-}
-
-function showSecret() {
-    document.getElementById("secretText").style.display = "block";
 }
 
 let noBtn = document.getElementById("noBtn");
