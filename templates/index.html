@@ -210,24 +210,28 @@ function propose() {
     document.getElementById("bgMusic").play();
 
     let ring = document.getElementById("ring");
+
+    // Force show ring
     ring.style.display = "block";
+    ring.style.position = "relative";
+    ring.style.zIndex = "1000";
     ring.style.opacity = "1";
 
-    // Slow rotation using JS
+    // Slow rotation
     let angle = 0;
     setInterval(function() {
         angle += 1;
         ring.style.transform = "rotateY(" + angle + "deg)";
     }, 20);
 
+    // Show message
     let msg = document.getElementById("loveMessage");
     msg.style.display = "block";
-    setTimeout(() => {
-        msg.style.opacity = "1";
-    }, 200);
+    msg.style.opacity = "1";
 
     createPetals();
 }
+
 
 function createPetals() {
     for (let i = 0; i < 20; i++) {
