@@ -74,7 +74,6 @@ body {
     width: 90%;
     max-width: 500px;
     text-align: center;
-    transition: transform 2s ease;
 }
 
 .photo img {
@@ -82,6 +81,7 @@ body {
     border-radius: 20px;
 }
 
+/* Buttons */
 button {
     margin-top: 15px;
     padding: 12px 25px;
@@ -102,12 +102,18 @@ button {
     color: #ff4b7d;
 }
 
-/* RING POP + ROTATE + GLOW */
+/* RING */
 .ring {
     font-size: 90px;
     margin-top: 20px;
     display: none;
-    animation: pop 1s ease forwards, rotateRing 6s linear infinite 1s, glow 2s infinite alternate 1s;
+}
+
+.ring-show {
+    display: block;
+    animation: pop 1s ease forwards,
+               rotateRing 6s linear infinite 1s,
+               glow 2s infinite alternate 1s;
 }
 
 @keyframes pop {
@@ -126,7 +132,7 @@ button {
     to { text-shadow: 0 0 40px #fff; }
 }
 
-/* MESSAGE FADE */
+/* MESSAGE */
 .message {
     margin-top: 20px;
     display: none;
@@ -158,6 +164,7 @@ button {
 
 <body>
 
+<!-- LOCK SCREEN -->
 <div class="lock-screen" id="lockScreen">
     <h2>🔐 Only one heart can unlock this 💖</h2>
     <p>Enter our secret word:</p>
@@ -166,10 +173,12 @@ button {
     <p id="errorMsg"></p>
 </div>
 
+<!-- MUSIC -->
 <audio id="bgMusic" loop>
     <source src="{{ url_for('static', filename='love.mp3') }}" type="audio/mpeg">
 </audio>
 
+<!-- MAIN CONTENT -->
 <div class="container hidden" id="mainContent">
 
     <h1>Hey Gopluuu 🥰</h1>
@@ -226,11 +235,15 @@ function unlock() {
 
 function propose() {
     document.getElementById("bgMusic").play();
-    document.getElementById("ring").style.display = "block";
-    document.getElementById("loveMessage").style.display = "block";
+
+    let ring = document.getElementById("ring");
+    ring.classList.add("ring-show");
+
+    let msg = document.getElementById("loveMessage");
+    msg.style.display = "block";
+
     createPetals();
 }
-
 
 function createPetals() {
     for (let i = 0; i < 20; i++) {
@@ -245,6 +258,7 @@ function createPetals() {
 }
 
 let noBtn = document.getElementById("noBtn");
+
 noBtn.addEventListener("mouseover", function() {
     noBtn.style.top = Math.random() * window.innerHeight + "px";
     noBtn.style.left = Math.random() * window.innerWidth + "px";
