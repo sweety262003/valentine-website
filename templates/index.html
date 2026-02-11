@@ -9,29 +9,63 @@ body {
     margin: 0;
     font-family: 'Segoe UI', sans-serif;
     min-height: 100vh;
-    overflow-x: hidden;
+    overflow: hidden;
     background: radial-gradient(circle at top, #ff9a9e, #fad0c4, #ffafbd);
     display: flex;
     justify-content: center;
     align-items: center;
+    color: white;
 }
 
-/* Sparkle overlay */
-body::before {
-    content: "";
-    position: fixed;
+/* LOCK SCREEN */
+.lock-screen {
+    position: absolute;
     width: 100%;
     height: 100%;
-    background-image: url("https://www.transparenttextures.com/patterns/stardust.png");
-    opacity: 0.4;
-    animation: sparkle 10s linear infinite;
+    background: linear-gradient(45deg, #ff758c, #ff7eb3);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 10;
+    text-align: center;
 }
 
-@keyframes sparkle {
-    from {background-position: 0 0;}
-    to {background-position: 500px 500px;}
+.lock-screen input {
+    padding: 12px;
+    border-radius: 20px;
+    border: none;
+    margin-top: 10px;
+    text-align: center;
+    font-size: 16px;
 }
 
+/* Shake animation */
+.shake {
+    animation: shake 0.4s;
+}
+
+@keyframes shake {
+    0% { transform: translateX(0); }
+    25% { transform: translateX(-10px); }
+    50% { transform: translateX(10px); }
+    75% { transform: translateX(-10px); }
+    100% { transform: translateX(0); }
+}
+
+.lock-screen button {
+    margin-top: 10px;
+    padding: 10px 20px;
+    border-radius: 20px;
+    border: none;
+    cursor: pointer;
+}
+
+.hidden {
+    display: none;
+}
+
+/* MAIN CONTENT */
 .container {
     background: rgba(255, 255, 255, 0.15);
     backdrop-filter: blur(20px);
@@ -40,26 +74,11 @@ body::before {
     width: 90%;
     max-width: 500px;
     text-align: center;
-    color: white;
-    box-shadow: 0 0 40px rgba(255,255,255,0.5);
-    animation: fadeIn 2s ease forwards;
-    transform: scale(0.9);
-    opacity: 0;
-}
-
-@keyframes fadeIn {
-    to {opacity: 1; transform: scale(1);}
 }
 
 .photo img {
     width: 100%;
     border-radius: 20px;
-    box-shadow: 0 0 25px rgba(255,255,255,0.8);
-    transition: 0.5s;
-}
-
-.photo img:hover {
-    transform: scale(1.05);
 }
 
 button {
@@ -69,17 +88,11 @@ button {
     border-radius: 30px;
     font-size: 18px;
     cursor: pointer;
-    transition: 0.3s;
 }
 
 .yes-btn {
     background: white;
     color: #ff4b7d;
-}
-
-.yes-btn:hover {
-    background: #ff4b7d;
-    color: white;
 }
 
 .no-btn {
@@ -88,68 +101,65 @@ button {
     color: #ff4b7d;
 }
 
-.music-btn {
-    background: white;
-    color: #ff4b7d;
+.ring {
+    font-size: 90px;
+    margin-top: 20px;
+    display: none;
+    animation: rotateRing 6s linear infinite;
+}
+
+@keyframes rotateRing {
+    from {transform: rotateY(0deg);}
+    to {transform: rotateY(360deg);}
 }
 
 .message {
     margin-top: 20px;
     display: none;
-    font-size: 20px;
-    animation: fadeIn 2s ease forwards;
 }
 
-/* RING ANIMATION */
-.ring {
-    font-size: 80px;
-    margin-top: 20px;
-    display: none;
-    animation: ringPop 1.5s ease forwards, glow 2s infinite alternate;
-}
-
-@keyframes ringPop {
-    0% {transform: scale(0); opacity: 0;}
-    60% {transform: scale(1.3); opacity: 1;}
-    100% {transform: scale(1);}
-}
-
-@keyframes glow {
-    from {text-shadow: 0 0 10px #fff;}
-    to {text-shadow: 0 0 30px #fff;}
-}
-
-.heart {
+.petal {
     position: fixed;
+    top: -10px;
     font-size: 24px;
-    animation: floatUp 4s linear infinite;
+    animation: fall linear forwards;
 }
 
-@keyframes floatUp {
-    0% {transform: translateY(100vh); opacity: 1;}
-    100% {transform: translateY(-10vh); opacity: 0;}
+@keyframes fall {
+    to {
+        transform: translateY(110vh) rotate(360deg);
+        opacity: 0.7;
+    }
 }
+
 </style>
 </head>
 
 <body>
 
+<div class="lock-screen" id="lockScreen">
+    <h2>🔐 Only one heart can unlock this 💖</h2>
+    <p>Enter our secret word:</p>
+    <input type="text" id="password" placeholder="Type here...">
+    <button onclick="unlock()">Unlock ✨</button>
+    <p id="errorMsg"></p>
+</div>
+
 <audio id="bgMusic" loop>
     <source src="{{ url_for('static', filename='love.mp3') }}" type="audio/mpeg">
 </audio>
 
-<div class="container">
-    <h1>Hey Gopluuu 🥰</h1>
+<div class="container hidden" id="mainContent">
 
-    <button class="music-btn" onclick="playMusic()">🎵 Tap to Feel the Magic</button>
+    <h1>Hey Gopluuu 🥰</h1>
 
     <div class="photo">
         <img src="{{ url_for('static', filename='couple.jpeg') }}">
     </div>
 
     <p>
-        Every memory with you feels like destiny ✨<br>
-        And I only want one future — with you 💞
+        From the first moment till forever,<br>
+        I choose you 💞
     </p>
 
     <h2>Will you be mine forever? 💍</h2>
@@ -160,32 +170,56 @@ button {
     <div class="ring" id="ring">💍</div>
 
     <div class="message" id="loveMessage">
-        You just made my world complete 🥰❤️<br>
-        Forever starts now 💞
+        You unlocked my heart forever ❤️✨
     </div>
+
 </div>
 
 <script>
 
-function playMusic() {
-    document.getElementById("bgMusic").play();
+// CHANGE SECRET WORD HERE
+const secretWord = "babypanda";
+
+let attempts = 0;
+
+function unlock() {
+    let input = document.getElementById("password");
+    let value = input.value.toLowerCase();
+    let errorMsg = document.getElementById("errorMsg");
+
+    if (value === secretWord) {
+        document.getElementById("lockScreen").classList.add("hidden");
+        document.getElementById("mainContent").classList.remove("hidden");
+        document.getElementById("bgMusic").play();
+    } else {
+        attempts++;
+        input.classList.add("shake");
+
+        setTimeout(() => input.classList.remove("shake"), 400);
+
+        if (attempts >= 3) {
+            errorMsg.innerHTML = "💔 Even after 3 tries... still not the one? 😌";
+        } else {
+            errorMsg.innerHTML = "Hmm... that's not our secret 😏";
+        }
+    }
 }
 
 function propose() {
     document.getElementById("ring").style.display = "block";
     document.getElementById("loveMessage").style.display = "block";
-    document.getElementById("bgMusic").play();
-    createHearts();
+    createPetals();
 }
 
-function createHearts() {
-    for (let i = 0; i < 40; i++) {
-        let heart = document.createElement("div");
-        heart.className = "heart";
-        heart.innerHTML = "💖";
-        heart.style.left = Math.random() * 100 + "vw";
-        document.body.appendChild(heart);
-        setTimeout(() => heart.remove(), 4000);
+function createPetals() {
+    for (let i = 0; i < 20; i++) {
+        let petal = document.createElement("div");
+        petal.className = "petal";
+        petal.innerHTML = "🌹";
+        petal.style.left = Math.random() * 100 + "vw";
+        petal.style.animationDuration = (3 + Math.random() * 3) + "s";
+        document.body.appendChild(petal);
+        setTimeout(() => petal.remove(), 6000);
     }
 }
 
