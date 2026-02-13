@@ -9,7 +9,7 @@ body {
     margin: 0;
     font-family: 'Segoe UI', sans-serif;
     min-height: 100vh;
-    overflow: auto;
+    overflow-y: auto;
     background: radial-gradient(circle at top, #ff9a9e, #fad0c4, #ffafbd);
     display: flex;
     justify-content: center;
@@ -41,39 +41,26 @@ body {
 }
 
 /* Shake animation */
-.shake {
-    animation: shake 0.4s;
-}
+.shake { animation: shake 0.4s; }
 
 @keyframes shake {
-    0% { transform: translateX(0); }
     25% { transform: translateX(-10px); }
     50% { transform: translateX(10px); }
     75% { transform: translateX(-10px); }
-    100% { transform: translateX(0); }
 }
 
-.lock-screen button {
-    margin-top: 10px;
-    padding: 10px 20px;
-    border-radius: 20px;
-    border: none;
-    cursor: pointer;
-}
+.hidden { display: none; }
 
-.hidden {
-    display: none;
-}
-
-/* MAIN CONTENT */
+/* MAIN CARD */
 .container {
-    background: rgba(255, 255, 255, 0.15);
+    background: rgba(255,255,255,0.15);
     backdrop-filter: blur(20px);
     border-radius: 25px;
     padding: 40px;
     width: 90%;
     max-width: 500px;
     text-align: center;
+    margin-bottom: 120px;
 }
 
 .photo img {
@@ -81,6 +68,7 @@ body {
     border-radius: 20px;
 }
 
+/* Buttons */
 button {
     margin-top: 15px;
     padding: 12px 25px;
@@ -90,28 +78,51 @@ button {
     cursor: pointer;
 }
 
-.yes-btn {
-    background: white;
-    color: #ff4b7d;
-}
-
+.yes-btn { background: white; color: #ff4b7d; }
 .no-btn {
     position: absolute;
     background: #ffffffaa;
     color: #ff4b7d;
 }
 
-/* RING */
-.ring {
-    font-size: 90px;
-    margin-top: 20px;
+/* CENTERED RING */
+.ring-center {
     display: none;
-    opacity: 0;
+    margin: 30px auto;
+    width: fit-content;
+    text-align: center;
+    position: relative;
+    z-index: 1000;
+}
+
+/* GLOW AURA */
+.ring-glow::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 220px;
+    height: 220px;
+    transform: translate(-50%, -50%);
+    background: radial-gradient(circle, rgba(255,255,255,0.85), rgba(255,255,255,0));
+    border-radius: 50%;
+    filter: blur(30px);
+    animation: pulseGlow 2s infinite alternate;
+}
+
+@keyframes pulseGlow {
+    from { transform: translate(-50%, -50%) scale(1); opacity: .8; }
+    to   { transform: translate(-50%, -50%) scale(1.3); opacity: 1; }
+}
+
+/* DIM BACKGROUND SPOTLIGHT */
+.dimmed {
+    background: radial-gradient(circle, rgba(0,0,0,0.55), rgba(0,0,0,0.9)) !important;
+    transition: background 1.5s ease;
 }
 
 /* MESSAGE */
 .message {
-    margin-top: 20px;
     display: none;
     opacity: 0;
     transition: opacity 2s ease;
@@ -124,14 +135,9 @@ button {
     font-size: 24px;
     animation: fall linear forwards;
 }
-
 @keyframes fall {
-    to {
-        transform: translateY(110vh) rotate(360deg);
-        opacity: 0.7;
-    }
+    to { transform: translateY(110vh) rotate(360deg); opacity: .7; }
 }
-
 </style>
 </head>
 
@@ -141,7 +147,7 @@ button {
 <div class="lock-screen" id="lockScreen">
     <h2>🔐 Only one heart can unlock this 💖</h2>
     <p>Enter our secret word:</p>
-    <input type="text" id="password" placeholder="Type here...">
+    <input type="text" id="password">
     <button onclick="unlock()">Unlock ✨</button>
     <p id="errorMsg"></p>
 </div>
@@ -160,17 +166,15 @@ button {
         <img src="{{ url_for('static', filename='couple.jpeg') }}">
     </div>
 
-    <p>
-        From the first moment till forever,<br>
-        I choose you 💞
-    </p>
+    <p>From the first moment till forever,<br>I choose you 💞</p>
 
     <h2>Will you be mine forever? 💍</h2>
 
     <button class="yes-btn" onclick="propose()">YES 💖</button>
     <button class="no-btn" id="noBtn">NO 🙈</button>
 
-    <div class="ring" id="ring">💍</div>
+    <!-- RING -->
+    <div id="ring" class="ring-center">💍</div>
 
     <div class="message" id="loveMessage">
         You unlocked my heart forever ❤️✨<br>
@@ -180,77 +184,66 @@ button {
 </div>
 
 <script>
-
 const secretWord = "babypanda";
 let attempts = 0;
 
-function unlock() {
+function unlock(){
     let input = document.getElementById("password");
-    let value = input.value.toLowerCase();
-    let errorMsg = document.getElementById("errorMsg");
-
-    if (value === secretWord) {
-        document.getElementById("lockScreen").classList.add("hidden");
-        document.getElementById("mainContent").classList.remove("hidden");
-        document.getElementById("bgMusic").play();
+    if(input.value.toLowerCase() === secretWord){
+        lockScreen.classList.add("hidden");
+        mainContent.classList.remove("hidden");
+        bgMusic.play();
     } else {
         attempts++;
         input.classList.add("shake");
-        setTimeout(() => input.classList.remove("shake"), 400);
-
-        if (attempts >= 3) {
-            errorMsg.innerHTML = "💔 Even after 3 tries... still not the one? 😌";
-        } else {
-            errorMsg.innerHTML = "Hmm... that's not our secret 😏";
-        }
+        setTimeout(()=>input.classList.remove("shake"),400);
+        errorMsg.innerHTML = attempts>=3 ?
+            "💔 Even after 3 tries... still not the one? 😌" :
+            "Hmm... that's not our secret 😏";
     }
 }
 
-function propose() {
-    document.getElementById("bgMusic").play();
+function propose(){
+    bgMusic.play();
 
-    let ring = document.getElementById("ring");
-
-    // Force show ring
+    const ring = document.getElementById("ring");
     ring.style.display = "block";
-    ring.style.position = "relative";
-    ring.style.zIndex = "1000";
-    ring.style.opacity = "1";
+    ring.classList.add("ring-glow");
 
-    // Slow rotation
+    document.body.classList.add("dimmed");
+
+    // slow rotation
     let angle = 0;
-    setInterval(function() {
-        angle += 1;
-        ring.style.transform = "rotateY(" + angle + "deg)";
-    }, 20);
+    setInterval(()=>{
+        angle+=1;
+        ring.style.transform = "rotateY("+angle+"deg)";
+    },20);
 
-    // Show message
-    let msg = document.getElementById("loveMessage");
-    msg.style.display = "block";
-    msg.style.opacity = "1";
+    const msg = document.getElementById("loveMessage");
+    msg.style.display="block";
+    setTimeout(()=>msg.style.opacity="1",200);
 
     createPetals();
+    ring.scrollIntoView({behavior:"smooth",block:"center"});
 }
 
-
-function createPetals() {
-    for (let i = 0; i < 20; i++) {
-        let petal = document.createElement("div");
-        petal.className = "petal";
-        petal.innerHTML = "🌹";
-        petal.style.left = Math.random() * 100 + "vw";
-        petal.style.animationDuration = (3 + Math.random() * 3) + "s";
-        document.body.appendChild(petal);
-        setTimeout(() => petal.remove(), 6000);
+function createPetals(){
+    for(let i=0;i<20;i++){
+        let p=document.createElement("div");
+        p.className="petal";
+        p.innerHTML="🌹";
+        p.style.left=Math.random()*100+"vw";
+        p.style.animationDuration=(3+Math.random()*3)+"s";
+        document.body.appendChild(p);
+        setTimeout(()=>p.remove(),6000);
     }
 }
 
-let noBtn = document.getElementById("noBtn");
-noBtn.addEventListener("mouseover", function() {
-    noBtn.style.top = Math.random() * window.innerHeight + "px";
-    noBtn.style.left = Math.random() * window.innerWidth + "px";
+// RUNNING NO BUTTON
+noBtn.addEventListener("mouseover",()=>{
+    noBtn.style.top=Math.random()*window.innerHeight+"px";
+    noBtn.style.left=Math.random()*window.innerWidth+"px";
 });
-
 </script>
 
 </body>
